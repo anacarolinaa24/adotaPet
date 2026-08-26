@@ -3,21 +3,21 @@ const cors = require("cors");
 require("dotenv").config();
 
 const animalRoutes = require("./src/routes/animalRoutes");
+const usuarioRoutes = require("./src/routes/usuarioRoutes");
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 
-// ROTA DE TESTE
 app.get("/", (req, res) => {
   res.json({
     mensagem: "API AdotaPet funcionando!",
   });
 });
 
-// ROTAS DE ANIMAIS
 app.use("/animais", animalRoutes);
+app.use("/usuarios", usuarioRoutes);
 
 const PORT = process.env.PORT || 3000;
 
