@@ -4,7 +4,7 @@ require("dotenv").config();
 
 const animalRoutes = require("./src/routes/animalRoutes");
 const usuarioRoutes = require("./src/routes/usuarioRoutes");
-
+const solicitacaoRoutes = require("./src/routes/solicitacaoRoutes");
 const app = express();
 
 app.use(cors());
@@ -18,6 +18,7 @@ app.get("/", (req, res) => {
 
 app.use("/animais", animalRoutes);
 app.use("/usuarios", usuarioRoutes);
+app.use("/solicitacoes", solicitacaoRoutes);
 
 const PORT = process.env.PORT || 3000;
 
