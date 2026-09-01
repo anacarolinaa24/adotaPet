@@ -1,2 +1,8 @@
 node_modules/
 .env
+
+# Arquivos enviados pelo Multer
+adotapet-api/src/uploads/*
+
+# Arquivos temporários de teste
+adotapet-api/imagem-teste-6mb.jpg
