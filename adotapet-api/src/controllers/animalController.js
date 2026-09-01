@@ -44,13 +44,14 @@ async function buscarAnimalPorId(req, res) {
 // CADASTRAR ANIMAL
 async function cadastrarAnimal(req, res) {
   try {
-    const { nome, especie, raca, sexo, idade, descricao, foto, status } =
-      req.body;
+    const { nome, especie, raca, sexo, idade, descricao, status } = req.body;
+
+    const foto = req.file ? req.file.filename : null;
 
     const [resultado] = await pool.query(
       `INSERT INTO animal
-            (nome, especie, raca, sexo, idade, descricao, foto, status)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+      (nome, especie, raca, sexo, idade, descricao, foto, status)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         nome,
         especie,
@@ -66,6 +67,7 @@ async function cadastrarAnimal(req, res) {
     res.status(201).json({
       mensagem: "Animal cadastrado com sucesso",
       id_animal: resultado.insertId,
+      foto: foto,
     });
   } catch (erro) {
     console.error(erro);

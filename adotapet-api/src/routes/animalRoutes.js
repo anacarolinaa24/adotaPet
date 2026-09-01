@@ -5,6 +5,7 @@ const router = express.Router();
 const animalController = require("../controllers/animalController");
 const autenticarToken = require("../middlewares/autenticarToken");
 const verificarAdmin = require("../middlewares/verificarAdmin");
+const upload = require("../middlewares/upload");
 
 // LISTAR TODOS OS ANIMAIS
 router.get("/", animalController.listarAnimais);
@@ -17,6 +18,7 @@ router.post(
   "/",
   autenticarToken,
   verificarAdmin,
+  upload.single("foto"),
   animalController.cadastrarAnimal,
 );
 
