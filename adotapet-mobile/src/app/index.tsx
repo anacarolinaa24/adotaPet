@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
 
 import {
+  ActivityIndicator,
   StyleSheet,
   Text,
   TextInput,
@@ -13,6 +14,34 @@ import {
 export default function LoginScreen() {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
+  const [verificandoSessao, setVerificandoSessao] = useState(true);
+
+  useEffect(() => {
+    verificarSessao();
+  }, []);
+
+  async function verificarSessao() {
+    try {
+      const token = await AsyncStorage.getItem("token");
+      const tipoUsuario = await AsyncStorage.getItem("tipo_usuario");
+
+      if (token) {
+        if (tipoUsuario === "ADMIN") {
+          router.replace("/admin-home");
+          return;
+        }
+
+        if (tipoUsuario === "USUARIO") {
+          router.replace("/home");
+          return;
+        }
+      }
+    } catch (erro) {
+      console.error("Erro ao verificar sessão:", erro);
+    } finally {
+      setVerificandoSessao(false);
+    }
+  }
 
   async function fazerLogin() {
     try {
@@ -23,6 +52,7 @@ export default function LoginScreen() {
           headers: {
             "Content-Type": "application/json",
           },
+
           body: JSON.stringify({
             email,
             senha,
@@ -32,7 +62,7 @@ export default function LoginScreen() {
 
       const dados = await resposta.json();
 
-      console.log(dados);
+      console.log("Login:", dados);
 
       if (!resposta.ok) {
         alert(dados.mensagem || "Erro ao realizar login");
@@ -43,19 +73,32 @@ export default function LoginScreen() {
 
       await AsyncStorage.setItem("tipo_usuario", dados.usuario.tipo_usuario);
 
+      if (dados.usuario.tipo_usuario === "ADMIN") {
+        router.replace("/admin-home");
+        return;
+      }
+
       if (dados.usuario.tipo_usuario === "USUARIO") {
         router.replace("/home");
         return;
       }
 
-      if (dados.usuario.tipo_usuario === "ADMIN") {
-        alert("Área administrativa será criada em seguida.");
-      }
+      alert("Tipo de usuário não reconhecido.");
     } catch (erro) {
       console.error("Erro no login:", erro);
 
       alert("Não foi possível conectar com a API.");
     }
+  }
+
+  if (verificandoSessao) {
+    return (
+      <View style={styles.loading}>
+        <ActivityIndicator size="large" />
+
+        <Text>Verificando sessão...</Text>
+      </View>
+    );
   }
 
   return (
@@ -105,6 +148,14 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     paddingHorizontal: 30,
+    backgroundColor: "#F7F7F7",
+  },
+
+  loading: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 10,
     backgroundColor: "#F7F7F7",
   },
 

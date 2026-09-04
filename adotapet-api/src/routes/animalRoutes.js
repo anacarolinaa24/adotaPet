@@ -3,17 +3,20 @@ const express = require("express");
 const router = express.Router();
 
 const animalController = require("../controllers/animalController");
+
 const autenticarToken = require("../middlewares/autenticarToken");
+
 const verificarAdmin = require("../middlewares/verificarAdmin");
+
 const upload = require("../middlewares/upload");
 
 // LISTAR TODOS OS ANIMAIS
 router.get("/", animalController.listarAnimais);
 
-// BUSCAR UM ANIMAL PELO ID
+// BUSCAR ANIMAL POR ID
 router.get("/:id", animalController.buscarAnimalPorId);
 
-// CADASTRAR UM NOVO ANIMAL
+// CADASTRAR ANIMAL
 router.post(
   "/",
   autenticarToken,
@@ -22,15 +25,16 @@ router.post(
   animalController.cadastrarAnimal,
 );
 
-// EDITAR UM ANIMAL
+// EDITAR ANIMAL
 router.put(
   "/:id",
   autenticarToken,
   verificarAdmin,
+  upload.single("foto"),
   animalController.editarAnimal,
 );
 
-// EXCLUIR UM ANIMAL
+// EXCLUIR ANIMAL
 router.delete(
   "/:id",
   autenticarToken,
